@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+//package mobileapi.proto;
+option go_package = "proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// Describes our API
+service MobileApi {
+    // Lists the article categories
+    rpc ListCategories (google.protobuf.Empty) returns (stream Category) {}
+    
+    // Lists the articles of a category by category id
+    rpc ListArticles (ByIdRequest) returns (stream ArticleOverview) {}
+
+    // Returns the article details by article id
+    rpc GetArticle (ByIdRequest) returns (Article) {}
+
+    // Stars or unstars the article
+    rpc SetStarred (ArticleStarRequest) returns (google.protobuf.Empty) {}
+}
+
+// Request used to fetch something by its id
+message ByIdRequest {
+    // Id of the entity being fetched
+    string id = 1;
+}
+
+// Request used to star / unstar an article
+message ArticleStarRequest {
+    // Id of the article being modified
+    string article_id = 1;
+
+    // Whether or not to star the article
+    bool star = 2;
+}
+
+// Article category
+message Category {
+    // Unique id for this category
+    string id = 1;
+
+    // Textual title
+    string title = 2;
+
+    // Url to to an image that describes this category
+    string image_url = 3;
+}
+
+// Article header; does not including the article body
+message ArticleOverview {
+    // Unique id for this article
+    string id = 1;
+
+    // Textual title of the article
+    string title = 2;
+
+    // 'Source' of the article; eg. "bbc", "cnn", "al-jazeera", etc.
+    string source = 3;
+
+    // Whether this article is starred 
+    bool starred = 4;
+
+    // Date when this article was published
+    google.protobuf.Timestamp date = 5;    
+}
+
+// Article details
+message Article {
+    // Article overview
+    ArticleOverview overview = 1;
+
+    // Body text of the article
+    string body = 2;
+
+    // Url of an image belonging to this article
+    string image_url = 3;
+}
